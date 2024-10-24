@@ -4,7 +4,7 @@
 This repo is designed to run on Google Colab, which runs [Python 3.10.12](https://www.python.org/downloads/release/python-31012/)
 * [Windows Build Instructions](https://www.youtube.com/watch?v=GqZT9EY4MGQ)
 
-## Setting up Virtual Environment
+## Making a Virtual Environment
 1. Run make_venv.py from within the scripts directory to make the virtual environment
 2. Activate the virtual environment in your shell 
     1. in your shell current shell using venv/Scripts/activate
