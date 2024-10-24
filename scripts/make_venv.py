@@ -26,7 +26,7 @@ def install_packages() -> None:
     subprocess.run(
         [
             Path(__file__)
-            .parent.parent.joinpath("venv/Scripts/python.exe")
+            .parent.parent.joinpath("venv/Scripts/python")
             .absolute(),
             "-m",
             "pip",
