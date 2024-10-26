@@ -17,7 +17,7 @@ def get_move() -> game_logic.Move:
 if __name__ == "__main__":
     board: game_logic.Board = game_logic.Board()
     while True:
-        print(f"{board.score()}\n{board}")
+        print(f"{board.score()}\n{board.pretty()}")
         move = get_move()
         result = board.make_move(move)
         if result == game_logic.MoveResult.LOST:

@@ -198,6 +198,26 @@ class Board:
                 return False
         return True
 
+    def pretty_tile(self, index: int) -> str:
+        val = str(int(self.value(index)))
+        if len(val) == 1:
+            return f"  {val}   "
+        elif len(val) == 2:
+            return f"  {val}  "
+        elif len(val) == 3:
+            return f" {val}  "
+        elif len(val) == 4:
+            return f" {val} "
+
+    def pretty(self) -> str:
+        top: str = "_" * 29
+        bottom: str = (("|" + ("_" * 6)) * 4) + "|"
+        middle: str = (("|" + (" " * 6)) * 4) + "|"
+        for i in range(0, 16, 4):
+            row = f"|{self.pretty_tile(i)}|{self.pretty_tile(i+1)}|{self.pretty_tile(i+2)}|{self.pretty_tile(i+3)}|"
+            top += f"\n{middle}\n{row}\n{bottom}"
+        return top
+
     def __str__(self) -> str:
         return (
             f"{self.board[0]} {self.board[1]} {self.board[2]} {self.board[3]}\n"
@@ -205,7 +225,3 @@ class Board:
             f"{self.board[8]} {self.board[9]} {self.board[10]} {self.board[11]}\n"
             f"{self.board[12]} {self.board[13]} {self.board[14]} {self.board[15]}"
         )
-
-
-if __name__ == "__main__":
-    pass
