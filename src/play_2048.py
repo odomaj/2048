@@ -2,7 +2,16 @@ import game_logic
 
 
 def get_move() -> game_logic.Move:
-    inp = input("enter move")
+    while True:
+        inp = input("enter move\n")
+        if inp == "w":
+            return game_logic.Move.UP
+        elif inp == "s":
+            return game_logic.Move.DOWN
+        elif inp == "a":
+            return game_logic.Move.LEFT
+        elif inp == "d":
+            return game_logic.Move.RIGHT
 
 
 if __name__ == "__main__":

@@ -25,6 +25,7 @@ class MoveResult(Enum):
 
 class Board:
     board: np.ndarray[np.float64] = None
+    """holds game board"""
     """
     0  1  2  3
     4  5  6  7
@@ -55,6 +56,8 @@ class Board:
         return score
 
     def value(self, index: int) -> np.float64:
+        if self.board[index] == 0:
+            return 0
         return np.power(2, self.board[index])
 
     def state(self) -> State:
@@ -72,6 +75,8 @@ class Board:
         return State.LOST
 
     def move(self, move: Move) -> bool:
+        """calls the correct move function and outputs True if the move was
+        successful"""
         if move == Move.UP:
             return self.move_up()
         elif move == Move.DOWN:
@@ -82,6 +87,7 @@ class Board:
             return self.move_right()
 
     def shift_gen(self, compressing: range, stagnant: range) -> bool:
+        """general shift tiles"""
         changed: bool = False
         changed_recently: bool = True
         while changed_recently:
@@ -103,6 +109,7 @@ class Board:
         return changed
 
     def combine_gen(self, compressing: range, stagnant: range) -> bool:
+        """general combine tiles"""
         changed: bool = False
         compressing_list: list = list(compressing)
         compress_gap: int = compressing_list[1] - compressing_list[0]
@@ -119,6 +126,7 @@ class Board:
         return changed
 
     def move_gen(self, compressing: range, stagnant: range) -> bool:
+        """general move"""
         changed: bool = self.shift_gen(compressing, stagnant)
         if self.combine_gen(compressing, stagnant):
             changed = True
@@ -138,6 +146,7 @@ class Board:
         return self.move_gen(range(3, -1, -1), range(0, 16, 4))
 
     def gen_legal(self, compressing: range, stagnant: range) -> bool:
+        """general legal check"""
         for stag in stagnant:
             # look for a zero tile followed by a nonzero tile
             empty_tile: bool = False
@@ -171,6 +180,9 @@ class Board:
         return self.gen_legal(range(3, -1, -1), range(0, 16, 4))
 
     def add_new(self) -> bool:
+        """adds a random 2 tile on the board if the board is not full
+        True if there are no 0 tiles on the board before the add, otherwise
+        False"""
         if self.full_board():
             return False
         i = randint(0, 15)
@@ -180,6 +192,7 @@ class Board:
         return True
 
     def full_board(self) -> bool:
+        """True if there are no 0 tiles on the board, otherwise False"""
         for tile in self.board:
             if tile == 0:
                 return False
