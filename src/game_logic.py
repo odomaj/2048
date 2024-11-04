@@ -1,6 +1,7 @@
 import numpy as np
 from enum import Enum
 from random import randint
+from typing import Union
 
 
 class Move(Enum):
@@ -24,7 +25,7 @@ class MoveResult(Enum):
 
 
 class Board:
-    board: np.ndarray[np.float64] = None
+    board: Union[np.ndarray[np.float64], None] = None
     """holds game board"""
     """
     0  1  2  3
@@ -54,6 +55,9 @@ class Board:
         for i in range(16):
             score += self.value(i)
         return score
+
+    def largest_tile(self) -> np.float64:
+        return self.value(np.argmax(self.board))
 
     def value(self, index: int) -> np.float64:
         if self.board[index] == 0:
