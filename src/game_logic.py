@@ -192,7 +192,10 @@ class Board:
         i = randint(0, 15)
         while self.board[i] != 0:
             i = randint(0, 15)
-        self.board[i] = 1
+        if randint(0, 9) == 9:
+            self.board[i] = 2
+        else:
+            self.board[i] = 1
         return True
 
     def full_board(self) -> bool:
