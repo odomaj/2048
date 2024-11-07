@@ -1,4 +1,4 @@
-import game_logic
+import env.game_logic as game_logic
 
 
 def get_move() -> game_logic.Move:

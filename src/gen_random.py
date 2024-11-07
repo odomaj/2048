@@ -1,4 +1,4 @@
-from random_agent import RandomAgent
+from agents.random_agent import RandomAgent
 from argparse import ArgumentParser
 from multiprocessing import Pool
 import numpy as np

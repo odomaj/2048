@@ -1,4 +1,4 @@
-from game_logic import Board, Move, MoveResult
+from env.game_logic import Board, Move, MoveResult
 from typing import Union
 from random import randint
 
