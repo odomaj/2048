@@ -1,5 +1,5 @@
 import sys
-from game_logic import Board, Move, MoveResult
+from .game_logic import Board, Move, MoveResult
 import tensorflow as tf
 from tf_agents.environments.py_environment import PyEnvironment
 from tf_agents.typing.types import NestedArraySpec
