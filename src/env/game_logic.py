@@ -232,3 +232,4 @@ class Board:
             f"{self.board[8]} {self.board[9]} {self.board[10]} {self.board[11]}\n"
             f"{self.board[12]} {self.board[13]} {self.board[14]} {self.board[15]}"
         )
+
