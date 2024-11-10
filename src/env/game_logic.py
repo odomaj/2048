@@ -205,6 +205,17 @@ class Board:
                 return False
         return True
 
+    def grid(self) -> np.ndarray[np.ndarray[np.float64]]:
+        return np.array(
+            [
+                self.board[:4],
+                self.board[4:8],
+                self.board[8:12],
+                self.board[12:],
+            ],
+            dtype=np.float64,
+        )
+
     def pretty_tile(self, index: int) -> str:
         val = str(int(self.value(index)))
         if len(val) == 1:
@@ -232,4 +243,3 @@ class Board:
             f"{self.board[8]} {self.board[9]} {self.board[10]} {self.board[11]}\n"
             f"{self.board[12]} {self.board[13]} {self.board[14]} {self.board[15]}"
         )
-

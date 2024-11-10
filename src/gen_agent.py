@@ -1,20 +1,21 @@
-from agents.learning_agent import DqnAgent
-from learning_agent import LearningAgent
+from agents.learning_agent import LearningAgent
 import tensorflow as tf
 
-def main():
+
+def main() -> None:
     # Initialize the learning agent
     agent = LearningAgent()
 
     # Set up the training parameters
     num_epochs = 1000  # Set the number of epochs as needed for training
     print("Starting training...")
-    
+
     # Train the agent
     agent.train(num_epochs)
 
     print("Training completed. Evaluating the agent...")
 
+    """
     # Test the agent's performance
     total_rewards = 0
     num_episodes = 10
@@ -33,6 +34,8 @@ def main():
 
     average_reward = total_rewards / num_episodes
     print(f"Average reward over {num_episodes} episodes: {average_reward}")
+    """
+
 
 if __name__ == "__main__":
     main()

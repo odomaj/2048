@@ -10,6 +10,7 @@ from tf_agents.replay_buffers.tf_uniform_replay_buffer import (
 from tf_agents.trajectories import from_transition
 from tf_agents.utils import common
 from typing import Union
+import numpy as np
 
 
 class LearningAgent:
@@ -20,9 +21,9 @@ class LearningAgent:
         self.env = TFPyEnvironment(GameEnvironment())
         self.eval_env = TFPyEnvironment(GameEnvironment())
         net: QNetwork = QNetwork(
-            self.env.observation_spec(),
-            self.env.action_spec(),
-            (128, 128),
+            input_tensor_spec=self.env.observation_spec(),
+            action_spec=self.env.action_spec(),
+            fc_layer_params=(128, 128),
         )
         self.agent = DqnAgent(
             self.env.time_step_spec(),
