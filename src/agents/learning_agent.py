@@ -25,6 +25,11 @@ class LearningAgent:
             action_spec=self.env.action_spec(),
             fc_layer_params=(128, 128),
         )
+        # print(
+        #    np.shape(self.env.time_step_spec()),
+        #    np.shape(self.env.action_spec()),
+        #    np.shape(self.env.observation_spec()),
+        # )
         self.agent = DqnAgent(
             self.env.time_step_spec(),
             self.env.action_spec(),
@@ -47,9 +52,24 @@ class LearningAgent:
                 action_step = self.agent.collect_policy.action(time_step)
                 next_time_step = self.env.step(action_step.action)
                 traj = from_transition(time_step, action_step, next_time_step)
+                print(traj)
                 replay_buffer.add_batch(traj)
                 time_step = next_time_step
+            print(
+                "**************************************************************"
+            )
             experience = replay_buffer.as_dataset(
-                sample_batch_size=64, num_steps=2
-            ).take(1)[0]
-            self.agent.train(experience)
+                sample_batch_size=64,
+                num_steps=2,
+                single_deterministic_pass=False,
+            )
+            print(experience)
+            print(
+                "**************************************************************"
+            )
+            print(experience.take(1))
+            print(
+                "**************************************************************"
+            )
+            self.agent.train(experience.take(1))
+            print("please print")

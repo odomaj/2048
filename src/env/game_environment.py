@@ -32,11 +32,11 @@ class GameEnvironment(PyEnvironment):
         """Reset the environment to its initial state"""
         self.board = Board()
         # Reset the board to the initial state
-        return time_step.restart(np.array(self.board.board, dtype=np.int32))
+        return time_step.restart(np.array(self.board.grid(), dtype=np.int32))
 
     def _step(self, action) -> time_step.TimeStep:
         """Take a step based on the action provided"""
-        move_result = self.board.make_move(Move(action))
+        move_result = self.board.make_move(Move(action + 1))
 
         if move_result == MoveResult.LOST:
             return time_step.termination(
@@ -52,9 +52,9 @@ class GameEnvironment(PyEnvironment):
             )
         else:
             # Compute the reward based on the Hankel matrix
-            reward = self.hankel_reward()
             return time_step.transition(
-                np.array(self.board.grid(), dtype=np.int32), reward=reward
+                np.array(self.board.grid(), dtype=np.int32),
+                reward=self.hankel_reward(),
             )
 
     def observation_spec(self) -> NestedArraySpec:
