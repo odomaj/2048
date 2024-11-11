@@ -27,9 +27,12 @@ class BasicAgent:
             return
         self.model.fit(dataset.batch(batch_size), epochs=epochs)
 
-    def predict(self):
+    def predict(self, data: np.ndarray[np.int32]):
         if model is None:
             return
+        if model is None:
+            return
+        return self.model.predict(data)
 
     def new(self) -> None:
         self.model = tf.keras.models.Sequential(
