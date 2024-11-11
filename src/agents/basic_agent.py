@@ -1,8 +1,17 @@
+import sys
+
+sys.path.append("..")
 import tensorflow as tf
 import numpy as np
-from typing import Union
+from typing import Union, Callable
 from env.game_logic import Board, Move, MoveResult
 from random import randint
+from pathlib import Path
+
+EARLY_GAME_SIZE = 1000
+LATE_GAME_SIZE = 1000
+BATCH_SIZE = 100
+EPOCHS = 10
 
 
 class BasicAgent:
@@ -29,10 +38,13 @@ class BasicAgent:
         batch_size: np.int32,
         epochs: np.int32,
     ) -> None:
-        self.model.fit(dataset.batch(batch_size), epochs)
+        self.model.fit(dataset.batch(batch_size), epochs=epochs)
 
     def predict(self):
         pass
+
+    def save(self, file: str) -> None:
+        self.model.save(Path(__file__).parent.joinpath(file))
 
 
 def create_dataset(
@@ -46,7 +58,9 @@ def gen_rand_tile(dist: np.ndarray[np.int32]) -> np.int32:
     return dist[randint(0, len(dist) - 1)]
 
 
-def best_move(board: Board, reward: function) -> Move:
+def best_move(
+    board: Board, reward: Callable[[Board, Move], MoveResult]
+) -> Move:
     moves = np.zeros(4)
     for i in range(len(moves)):
         moves[i] = reward(board, Move(i + 1))
@@ -59,7 +73,7 @@ def gen_rand_board(
     board: Board = Board()
     for i in range(len(board.board)):
         board.board[i] = gen_rand_tile(tile_dist)
-    return (np.array(board.board, dtype=np.int32),)
+    return np.array(board.board, dtype=np.int32)
 
 
 def normal_dist() -> np.ndarray[np.int32]:
@@ -103,12 +117,11 @@ def exp_dist() -> np.ndarray[np.int32]:
     return dist
 
 
-def hankel_reward(board: Board, move: Move) -> np.float32:
+def hankel_reward(board: np.ndarray[np.int32], move: Move) -> np.float32:
     """Compute the reward based on the Hankel matrix"""
-    board_save = np.array(board.board)
-    result = board.make_move(move)
-    new_board = np.array(board.board)
-    board.board = board_save
+    game_board: Board = Board()
+    game_board.board = np.array(board, dtype=np.float64)
+    result = game_board.make_move(move)
     if result == MoveResult.ILLEGAL_MOVE or result == MoveResult.LOST:
         return np.finfo(np.float32).min
     # Define the 4x4 Hankel matrix
@@ -133,24 +146,26 @@ def hankel_reward(board: Board, move: Move) -> np.float32:
         ]
     )
     # Calculate the reward as the dot product of the board and Hankel matrix
-    return np.dot(new_board, hankel_matrix)
+    return np.dot(game_board.board, hankel_matrix)
 
 
 if __name__ == "__main__":
     early_game: np.ndarray[np.int32] = exp_dist()
     late_game: np.ndarray[np.int32] = normal_dist()
-    boards: list[Union[np.ndarray[np.int32], None]] = [None] * 2000
-    moves: list[Union[np.int32, None]] = [None] * 2000
-    for i in range(0, 1000):
-        boards[i] = gen_rand_board(early_game)
-        moves[i] = np.int32(int(best_move(boards[i], hankel_reward)) - 1)
-    for i in range(1000, 2000):
-        boards[i] = gen_rand_board(late_game)
-        moves[i] = np.int32(int(best_move(boards[i], hankel_reward)) - 1)
-
-    training_data: tf.data.Dataset = create_dataset(
-        np.array(boards), np.array(moves)
+    boards: list[Union[np.ndarray[np.int32], None]] = [None] * (
+        EARLY_GAME_SIZE + LATE_GAME_SIZE
     )
+    moves: list[Union[np.int32, None]] = [None] * (
+        EARLY_GAME_SIZE + LATE_GAME_SIZE
+    )
+    for i in range(0, EARLY_GAME_SIZE):
+        boards[i] = gen_rand_board(early_game)
+        moves[i] = np.int32(int(best_move(boards[i], hankel_reward).value) - 1)
+    for i in range(EARLY_GAME_SIZE, EARLY_GAME_SIZE + LATE_GAME_SIZE):
+        boards[i] = gen_rand_board(late_game)
+        moves[i] = np.int32(int(best_move(boards[i], hankel_reward).value) - 1)
 
+    training_data: tf.data.Dataset = create_dataset(boards, moves)
     model: BasicAgent = BasicAgent()
-    model.fit(training_data, 100, 10)
+    model.fit(training_data, EARLY_GAME_SIZE + LATE_GAME_SIZE, EPOCHS)
+    model.save("model.keras")
