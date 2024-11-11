@@ -8,16 +8,30 @@ from env.game_logic import Board, Move, MoveResult
 from random import randint
 from pathlib import Path
 
-EARLY_GAME_SIZE = 1000
-LATE_GAME_SIZE = 1000
+EARLY_GAME_SIZE = 10000
+LATE_GAME_SIZE = 10000
 BATCH_SIZE = 100
-EPOCHS = 10
+EPOCHS = 100
 
 
 class BasicAgent:
     model: Union[tf.keras.models.Sequential, None] = None
 
-    def __init__(self) -> None:
+    def fit(
+        self,
+        dataset: tf.data.Dataset,
+        batch_size: np.int32,
+        epochs: np.int32,
+    ) -> None:
+        if model is None:
+            return
+        self.model.fit(dataset.batch(batch_size), epochs=epochs)
+
+    def predict(self):
+        if model is None:
+            return
+
+    def new(self) -> None:
         self.model = tf.keras.models.Sequential(
             [
                 tf.keras.layers.Flatten(input_shape=(16,)),
@@ -32,19 +46,15 @@ class BasicAgent:
             metrics=["accuracy"],
         )
 
-    def fit(
-        self,
-        dataset: tf.data.Dataset,
-        batch_size: np.int32,
-        epochs: np.int32,
-    ) -> None:
-        self.model.fit(dataset.batch(batch_size), epochs=epochs)
-
-    def predict(self):
-        pass
-
     def save(self, file: str) -> None:
+        if model is None:
+            return
         self.model.save(Path(__file__).parent.joinpath(file))
+
+    def load(self, file: str) -> None:
+        self.model = tf.keras.models.load_model(
+            Path(__file__).parent.joinpath(file)
+        )
 
 
 def create_dataset(
@@ -167,5 +177,6 @@ if __name__ == "__main__":
 
     training_data: tf.data.Dataset = create_dataset(boards, moves)
     model: BasicAgent = BasicAgent()
+    model.new()
     model.fit(training_data, EARLY_GAME_SIZE + LATE_GAME_SIZE, EPOCHS)
     model.save("model.keras")
