@@ -52,7 +52,7 @@ class LearningAgent:
                 action_step = self.agent.collect_policy.action(time_step)
                 next_time_step = self.env.step(action_step.action)
                 traj = from_transition(time_step, action_step, next_time_step)
-                print(traj)
+                #print(traj)
                 replay_buffer.add_batch(traj)
                 time_step = next_time_step
             print(
