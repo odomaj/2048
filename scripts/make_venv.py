@@ -20,6 +20,26 @@ def make_venv() -> None:
     )
 
 
+def clean_venv() -> None:
+    """cleans the virtual environment in the root directory of the repo named
+    venv"""
+    subprocess.run(
+        [
+            Path(__file__)
+            .parent.parent.joinpath("venv/Scripts/python")
+            .absolute(),
+            "-m",
+            "pip",
+            "freeze",
+            "|",
+            "xargs",
+            "pip",
+            "uninstall",
+            "-y",
+        ]
+    )
+
+
 def install_packages() -> None:
     """uses pip to install all of the dependencies specified in the
     requirements.txt of the root directory in the virtual environment venv"""
@@ -30,11 +50,30 @@ def install_packages() -> None:
             .absolute(),
             "-m",
             "pip",
+            "--timeout",
+            "1000",
             "install",
             "-r",
             Path(__file__)
             .parent.parent.joinpath("requirements.txt")
             .absolute(),
+        ]
+    )
+
+
+def update_pip() -> None:
+    """updates pip in the virtual environment in the root directory of the
+    repo named venv"""
+    subprocess.run(
+        [
+            Path(__file__)
+            .parent.parent.joinpath("venv/Scripts/python")
+            .absolute(),
+            "-m",
+            "pip",
+            "install",
+            "--upgrade",
+            "pip",
         ]
     )
 
@@ -52,7 +91,10 @@ if __name__ == "__main__":
         Path(sys.executable).parent.parent.parent.absolute()
         == Path(__file__).parent.parent.absolute()
     ):
+        update_pip()
+        clean_venv()
         install_packages()
     else:
         make_venv()
+        update_pip()
         install_packages()

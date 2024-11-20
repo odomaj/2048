@@ -25,9 +25,10 @@ def matching_reqs(
     matches: list[tuple[str, str]] = []
     for package in old_reqs:
         new_package = find_package(package[0], new_reqs)
-        if new_package is None:
-            new_package = package
-        matches.append(new_package)
+        # if new_package is None:
+        #    new_package = package
+        if new_package is not None:
+            matches.append(new_package)
     return matches
 
 
