@@ -25,11 +25,6 @@ class LearningAgent:
             action_spec=self.env.action_spec(),
             fc_layer_params=(128, 128),
         )
-        # print(
-        #    np.shape(self.env.time_step_spec()),
-        #    np.shape(self.env.action_spec()),
-        #    np.shape(self.env.observation_spec()),
-        # )
         self.agent = DqnAgent(
             self.env.time_step_spec(),
             self.env.action_spec(),
@@ -52,10 +47,6 @@ class LearningAgent:
                 action_step = self.agent.collect_policy.action(time_step)
                 next_time_step = self.env.step(action_step.action)
                 traj = from_transition(time_step, action_step, next_time_step)
-<<<<<<< Updated upstream
-                #print(traj)
-=======
->>>>>>> Stashed changes
                 replay_buffer.add_batch(traj)
                 time_step = next_time_step
             experience = replay_buffer.as_dataset(
@@ -63,45 +54,6 @@ class LearningAgent:
                 num_steps=2,
                 single_deterministic_pass=False,
             )
-            print(
-                "**************************************************************"
-            )
-            print("                       full dataset")
-            print(
-                "**************************************************************"
-            )
-            print(experience)
-            print(
-                "**************************************************************"
-            )
-            print("                         take 1")
-            print(
-                "**************************************************************"
-            )
-            print(experience.take(1))
-            print(
-                "**************************************************************"
-            )
-            print("                         data spec")
-            print(
-                "**************************************************************"
-            )
-            print(self.agent.training_data_spec)
-            print(
-                "**************************************************************"
-            )
-            print("                         kaboom")
-            print(
-                "**************************************************************"
-            )
-            # self.agent.train(self.agent.training_data_spec)
-            # print("that worked")
             for element in experience.take(1):
                 useful_thing = element[0]
-                print(useful_thing)
                 self.agent.train(useful_thing)
-            print(
-                "--------------------------------------------------------------------------------------------------"
-            )
-            # self.agent.train(experience)
-            print("please print")

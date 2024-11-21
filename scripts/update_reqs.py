@@ -44,8 +44,8 @@ def to_reqs(lines: list[str]) -> list[tuple[str, str]]:
 if __name__ == "__main__":
     arg_parser = ArgumentParser()
     arg_parser.add_argument("--src", "-s", default="")
-    arg_parser.add_argument("--dest", "-d", default="")
-    arg_parser.add_argument("--out", "-o", default="")
+    arg_parser.add_argument("--dest", "-d", default="../requirements.txt")
+    arg_parser.add_argument("--out", "-o", default="../requirements.txt")
     args = arg_parser.parse_args()
 
     if args.src == "" or args.dest == "" or args.out == "":
