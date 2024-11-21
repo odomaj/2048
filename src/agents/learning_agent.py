@@ -31,7 +31,7 @@ class LearningAgent:
             q_network=net,
             optimizer=Adam(learning_rate=1e-3),
             td_errors_loss_fn=common.element_wise_squared_loss,
-            train_step_counter=tf.Variable(0).value(),
+            train_step_counter=tf.Variable(0),
         )
         self.agent.initialize()
 
@@ -55,5 +55,5 @@ class LearningAgent:
                 single_deterministic_pass=False,
             )
             for element in experience.take(1):
-                useful_thing = element[0]
-                self.agent.train(useful_thing)
+                loss = self.agent.train(element[0])
+                # print(loss)
