@@ -1,19 +1,22 @@
 from agents.learning_agent import LearningAgent
+from pathlib import Path
+import env.game_environment as ge
 import tensorflow as tf
 
 
 def main() -> None:
     # Initialize the learning agent
-    agent = LearningAgent()
-
+    agent = LearningAgent(Path("test"), reward_function=ge.hankel_reward)
     # Set up the training parameters
-    num_epochs = 1000  # Set the number of epochs as needed for training
+    num_epochs = 1  # Set the number of epochs as needed for training
     print("Starting training...")
 
     # Train the agent
     agent.train(num_epochs)
-
+    agent.change_reward(ge.generic_reward)
+    agent.train(num_epochs)
     print("Training completed. Evaluating the agent...")
+    agent.save()
 
     """
     # Test the agent's performance
