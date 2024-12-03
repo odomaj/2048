@@ -6,16 +6,23 @@ import tensorflow as tf
 
 def main() -> None:
     # Initialize the learning agent
-    agent = LearningAgent(Path("test"), reward_function=ge.hankel_reward)
+    agent = LearningAgent(
+        Path(__file__)
+        .parent.parent.joinpath("saves")
+        .joinpath("learning_agent"),
+        reward_function=ge.less_tiles_reward,
+    )
+    print(agent.run_game())
+    exit()
     # Set up the training parameters
-    num_epochs = 1  # Set the number of epochs as needed for training
+    num_epochs = 10000  # Set the number of epochs as needed for training
     print("Starting training...")
-
+    for _ in range(100):
+        agent.train(100)
+        agent.save()
     # Train the agent
     agent.train(num_epochs)
-    agent.change_reward(ge.generic_reward)
-    agent.train(num_epochs)
-    print("Training completed. Evaluating the agent...")
+    print("Training completed. Saving the agent...")
     agent.save()
 
     """

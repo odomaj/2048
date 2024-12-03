@@ -92,8 +92,8 @@ class GameEnvironment(PyEnvironment):
                 np.array(self.board.grid(), dtype=np.int32), reward=1.0
             )
         elif move_result == MoveResult.ILLEGAL_MOVE:
-            return time_step.transition(
-                np.array(self.board.grid(), dtype=np.int32), reward=-1.0
+            return time_step.termination(
+                np.array(self.board.grid(), dtype=np.int32), reward=0
             )
         else:
             # Compute the reward based on the Hankel matrix
@@ -109,3 +109,6 @@ class GameEnvironment(PyEnvironment):
     def action_spec(self) -> NestedArraySpec:
         """Returns the spec for the possible actions (0-3: up, right, down, left)"""
         return self._action_spec
+
+    def render(self, mode="human") -> None:
+        print(self.board.pretty())

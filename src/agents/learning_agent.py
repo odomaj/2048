@@ -15,6 +15,8 @@ from env.game_logic import Board
 from pathlib import Path
 import numpy as np
 
+from time import sleep
+
 
 class LearningAgent:
     env: Union[TFPyEnvironment, None] = None
@@ -65,11 +67,12 @@ class LearningAgent:
         self.train_checkpointer.initialize_or_restore()
 
     def change_reward(self, reward: Callable[[Board], np.float32]) -> None:
-        self.env.reward_func = reward
-        self.eval_env.reward_func = reward
+        self.env = TFPyEnvironment(ge.GameEnvironment(reward_func=reward))
+        self.eval_env = TFPyEnvironment(ge.GameEnvironment(reward_func=reward))
 
     def train(self, epoch: int) -> None:
-        for _ in range(epoch):
+        i = 0
+        while i < epoch:
             time_step = self.env.reset()
             while not time_step.is_last():
                 action_step = self.agent.collect_policy.action(time_step)
@@ -82,9 +85,23 @@ class LearningAgent:
                 num_steps=2,
                 single_deterministic_pass=False,
             )
+            if tf.data.experimental.cardinality(experience) == 0:
+                continue
             for element in experience.take(1):
                 loss = self.agent.train(element[0])
                 # print(loss)
+            i += 1
+
+    def run_game(self) -> np.int32:
+        time_step = self.eval_env.reset()
+        while not time_step.is_last():
+            time_step = self.eval_env.step(
+                self.agent.policy.action(time_step).action
+            )
+            self.eval_env.render(mode="human")
+        board = Board()
+        board.board = time_step[3].numpy().flatten()
+        return board.score()
 
     def save(self) -> None:
         self.train_checkpointer.save(self.global_step)
