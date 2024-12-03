@@ -23,6 +23,8 @@ class RandomAgent:
                 break
             elif result == MoveResult.LOST:
                 break
+            elif result == MoveResult.ILLEGAL_MOVE:
+                break
         self.score = int(self.game.score())
         self.largest_tile = int(self.game.largest_tile())
         return won

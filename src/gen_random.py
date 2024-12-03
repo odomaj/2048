@@ -2,6 +2,7 @@ from agents.random_agent import RandomAgent
 from argparse import ArgumentParser
 from multiprocessing import Pool
 import numpy as np
+from pathlib import Path
 
 
 def sample(count: int) -> np.ndarray[np.float64]:
@@ -58,8 +59,11 @@ if __name__ == "__main__":
         help="number of random games to be run",
     )
     args = arg_parser.parse_args()
-    print(
-        interpret_results(
-            run_samples(int(args.thread_count), int(args.sample_size))
-        )
-    )
+    results = run_samples(int(args.thread_count), int(args.sample_size))
+    print(interpret_results(results))
+    with Path(__file__).parent.parent.joinpath("data").joinpath(
+        "hard_rand_results.txt"
+    ).open("w") as file:
+        for i in range(len(results) - 1):
+            file.write(f"{results[i]} ")
+        file.write(f"{results[-1]}")

@@ -82,7 +82,6 @@ class GameEnvironment(PyEnvironment):
     def _step(self, action) -> time_step.TimeStep:
         """Take a step based on the action provided"""
         move_result = self.board.make_move(Move(action + 1))
-
         if move_result == MoveResult.LOST:
             return time_step.termination(
                 np.array(self.board.grid(), dtype=np.int32), reward=0
