@@ -455,6 +455,11 @@ class LearningAgent:
         self.train_checkpointer.save(self.global_step)
 
 
+def write_output(file: Path, output: str) -> None:
+    with file.open("w") as f:
+        f.write(f"{output}\n")
+
+
 def interpret_results(results: np.ndarray[np.float64]) -> str:
     output = (
         f"**********RESULTS**********\n * sample size = {len(results)}\n *"
@@ -482,7 +487,7 @@ if __name__ == "__main__":
         reward_function=hankel_reward,
     )
 
-    num_games = 100
+    num_games = 400
     less_tiles_scores = np.zeros(num_games, dtype=np.int32)
     generic_scores = np.zeros(num_games, dtype=np.int32)
     hankel_scores = np.zeros(num_games, dtype=np.int32)
@@ -493,3 +498,21 @@ if __name__ == "__main__":
     print(f"LESS TILES\n{interpret_results(less_tiles_scores)}")
     print(f"GENERIC\n{interpret_results(generic_scores)}")
     print(f"HANKEL\n{interpret_results(hankel_scores)}")
+    write_output(
+        Path(__file__)
+        .parent.parent.joinpath("output")
+        .joinpath("less_tiles_scores.txt"),
+        less_tiles_scores,
+    )
+    write_output(
+        Path(__file__)
+        .parent.parent.joinpath("output")
+        .joinpath("generic_scores.txt"),
+        generic_scores,
+    )
+    write_output(
+        Path(__file__)
+        .parent.parent.joinpath("output")
+        .joinpath("hankel_scores.txt"),
+        hankel_scores,
+    )

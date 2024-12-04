@@ -23,16 +23,24 @@ class BasicAgent:
         batch_size: np.int32,
         epochs: np.int32,
     ) -> None:
-        if model is None:
+        if self.model is None:
             return
         self.model.fit(dataset.batch(batch_size), epochs=epochs)
 
-    def predict(self, data: np.ndarray[np.int32]):
-        if model is None:
+    def predict(self, data: np.ndarray[np.int32]) -> Move:
+        if self.model is None:
             return
-        if model is None:
+        if self.model is None:
             return
-        return self.model.predict(data)
+        return Move(np.argmax(self.model.predict(np.array([data]))[0]) + 1)
+
+    def run_game(self) -> np.int32:
+        board = Board()
+        while True:
+            result = board.make_move(self.predict(board.board))
+            if result != MoveResult.CONTINUE:
+                break
+        return board.score()
 
     def new(self) -> None:
         self.model = tf.keras.models.Sequential(
@@ -50,7 +58,7 @@ class BasicAgent:
         )
 
     def save(self, file: str) -> None:
-        if model is None:
+        if self.model is None:
             return
         self.model.save(Path(__file__).parent.joinpath(file))
 
